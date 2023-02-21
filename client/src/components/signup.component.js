@@ -31,6 +31,8 @@ export default class SignUp extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data, "userRegister");
+        alert("dang ki thanh cong !");
+        window.location.href = "./sign-in ";
       });
   }
   render() {

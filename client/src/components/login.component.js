@@ -29,6 +29,13 @@ export default class Login extends Component {
       .then((res) => res.json())
       .then((data) => {
         console.log(data, "User login");
+        if (data.status === "ok") {
+          alert("Dang nhap thanh cong !");
+          window.localStorage.setItem("token", data.data);
+          window.localStorage.setItem("LoginIn", true);
+          window.location.href = "./userdetails";
+        }
+
       });
   }
   render() {

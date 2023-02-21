@@ -22,6 +22,7 @@ app.use((_req, res, next) => {
 
 
 const User = mongoose.model("UserInfo");
+
 app.post("/register", async (req, res) => {
     const { fname, lname, email, password } = req.body;
     const brcyptpassword = await brcypt.hash(password, 10);
@@ -39,15 +40,19 @@ app.post("/register", async (req, res) => {
     }
 })
 
+
 app.post("/login", async (req, res) => {
     const { email, password } = req.body;
-    const User = await User.findOne({ email });
-    if (!User) {
+    const user = await User.findOne({ email });
+    if (!user) {
         return res.json({ error: "User khong ton tai" });
 
     }
     if (await brcypt.compare(password, user.password)) {
-        const token = jwt.sign({}, JWT);
+        const token = jwt.sign({ email: user.email }, JWT, {
+            expiresIn: 10
+        });
+
         if (res.status(201)) {
             return res.json({ status: "ok", data: token })
         } else {
@@ -59,6 +64,29 @@ app.post("/login", async (req, res) => {
     res.json({ status: "error", error: "password and email not exits !" })
 });
 
+
+app.post('/user', async (req, res) => {
+    const { token } = req.body;
+    try {
+        const user = jwt.verify(token, JWT, (err, res) => {
+            if (err) {
+                return "token expired";
+            }
+            console.log(err);
+            return res;
+        });
+        if (user === "token expired") {
+            return res.send({ status: "error", data: "token expired" });
+        }
+        const useremail = user.email;
+        User.findOne({ email: useremail }).then((data) => {
+            res.send({ status: "ok", data: data });
+        })
+
+    } catch (error) {
+        res.send({ status: "error", data: error });
+    }
+})
 
 
 
