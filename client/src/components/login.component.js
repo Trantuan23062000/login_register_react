@@ -13,7 +13,7 @@ export default class Login extends Component {
     e.preventDefault();
     const { email, password } = this.state;
     console.log(email, password);
-    fetch("http://localhost:3000/login", {
+    fetch("http://localhost:5000/login", {
       method: "POST",
       crossDomain: true,
       headers: {
@@ -82,7 +82,7 @@ export default class Login extends Component {
           </button>
         </div>
         <p className="forgot-password text-right">
-          Forgot <a href="/fogotpassword">password?</a>
+          Forgot <a href="/forgot-password">password?</a>
         </p>
       </form>
     )

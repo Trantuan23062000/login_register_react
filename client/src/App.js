@@ -7,6 +7,7 @@ import Login from './components/login.component'
 import SignUp from './components/signup.component'
 import USers from './components/userdetails'
 import Userdetails from './components/userdetails'
+import Forgot from './components/resetpassword'
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<SignUp />} />
               <Route path="/userdetails" element={<USers />} />
+              <Route path="/forgot-password" element={<Forgot />} />
             </Routes>
           </div>
         </div>

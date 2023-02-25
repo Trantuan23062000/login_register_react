@@ -2,23 +2,20 @@ const express = require('express')
 const mongoose = require('mongoose')
 const app = express();
 const cors = require("cors");
-const jwt = require("jsonwebtoken")
+const jwt = require('jsonwebtoken');
 const brcypt = require('bcryptjs')
+app.set("view engine", "ejs");
+
 
 const JWT = "hfshfsjfhdsjfsdhfsdfhsfldsflskdfsjfsl;ffeeufie";
 
 
 require("./usersdetail");
 
-
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
-app.use((_req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', '*');
 
-    next();
-});
 
 
 const User = mongoose.model("UserInfo");
@@ -88,11 +85,79 @@ app.post('/user', async (req, res) => {
     }
 })
 
+app.post("/forgot-password", async (req, res) => {
+    const { email } = req.body;
+    try {
+        const old_User = await User.findOne({ email });
+        if (!old_User) {
+            return res.json({ status: "User Not Exists!!" });
+        }
+        const secret = JWT + old_User.password;
+        const token = jwt.sign({ email: old_User.email, id: old_User._id }, secret, {
+            expiresIn: "5m",
+        });
+        const link = `http://localhost:5000/reset-password/${old_User._id}/${token}`;
+        console.log(link);
+
+    } catch (error) {
+
+    }
+})
+
+app.get("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    console.log(req.params);
+    const old_User = await User.findOne({ _id: id });
+    if (!old_User) {
+        return res.json({ status: "User Not Exists!!" });
+    }
+    const secret = JWT + old_User.password;
+    try {
+        const verify = jwt.verify(token, secret);
+        res.render("index", { email: verify.email, status: "Not Verified" });
+    } catch (error) {
+        console.log(error);
+        res.send("Not Verified");
+    }
+});
+
+
+app.post("/reset-password/:id/:token", async (req, res) => {
+    const { id, token } = req.params;
+    const { password } = req.body;
+
+    const old_User = await User.findOne({ _id: id });
+    if (!old_User) {
+        return res.json({ status: "User Not Exists!!" });
+    }
+    const secret = JWT + old_User.password;
+    try {
+        const verify = jwt.verify(token, secret);
+        const encryptedPassword = await brcypt.hash(password, 10);
+        await User.updateOne(
+            {
+                _id: id,
+            },
+            {
+                $set: {
+                    password: encryptedPassword,
+                },
+            }
+        );
+
+        res.render("index", { email: verify.email, status: "verified" });
+        res.send('doi duoc roi');
+    } catch (error) {
+        console.log(error);
+        res.json({ status: "Something Went Wrong" });
+    }
+});
 
 
 
 
-const url = "mongodb+srv://tuan:tuan123@cluster0.dxscbtu.mongodb.net/?retryWrites=true&w=majority"
+
+const url = "mongodb+srv://trantuan2306:trantuan2306@tuan.udd7jr3.mongodb.net/?retryWrites=true&w=majority"
 mongoose.set('strictQuery', true);
 mongoose.connect(url, {
     useNewUrlParser: true,
@@ -101,7 +166,7 @@ mongoose.connect(url, {
 
 }).catch((e) => console.log(e));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 
 app.listen(PORT, console.log(`Server dang chay http://localhost:${PORT}`));

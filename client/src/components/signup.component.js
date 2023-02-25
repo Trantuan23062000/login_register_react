@@ -15,7 +15,7 @@ export default class SignUp extends Component {
     e.preventDefault();
     const { fname, lname, email, password } = this.state;
     console.log(fname, lname, email, password);
-    fetch("http://localhost:3000/register", {
+    fetch("http://localhost:5000/register", {
       method: "POST",
       crossDomain: true,
       headers: {
@@ -32,7 +32,7 @@ export default class SignUp extends Component {
       .then((data) => {
         console.log(data, "userRegister");
         alert("dang ki thanh cong !");
-        window.location.href = "./sign-in ";
+        window.location.href = "./login ";
       });
   }
   render() {
