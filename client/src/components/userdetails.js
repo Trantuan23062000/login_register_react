@@ -1,15 +1,14 @@
-import React, { Component } from "react";
+import React, { Component, useEffect, useState } from "react";
+import AdminHome from "./adminhome";
 
+import UserHome from "./userHome";
 
-export default class Userdetails extends Component {
-    constructor(data) {
-        super(data);
-        this.state = {
-            userData: "",
-        }
-    }
-    componentDidMount() {
-        fetch("http://localhost:3000/user", {
+export default function UserDetails() {
+    const [userData, setUserData] = useState("");
+    const [admin, setAdmin] = useState(false);
+
+    useEffect(() => {
+        fetch("http://localhost:5000/user", {
             method: "POST",
             crossDomain: true,
             headers: {
@@ -20,32 +19,23 @@ export default class Userdetails extends Component {
             body: JSON.stringify({
                 token: window.localStorage.getItem("token"),
             }),
-
         })
             .then((res) => res.json())
             .then((data) => {
-                this.setState({ userData: data.data })
-                if (data.data === 'token expired') {
-                    alert("Ban da het thoi gian cho vui long dang nhap lai");
+                console.log(data, "userData");
+                if (data.data.userType === "Admin") {
+                    setAdmin(true);
+                }
+
+                setUserData(data.data);
+
+                if (data.data === "token expired") {
+                    alert("Token expired login again");
                     window.localStorage.clear();
                     window.location.href = "./login";
                 }
             });
+    }, []);
 
-    }
-    Logout = () => {
-        window.localStorage.clear();
-        window.location.href = "./login"
-    }
-    render() {
-        return (
-            <div>
-                <h6>hello {this.state.userData.lname}</h6>
-                <h6>Email login: {this.state.userData.email}</h6>
-                <button onClick={this.Logout} type="submit" className="btn btn-primary">Logout</button>
-            </div>
-        )
-    }
-
+    return admin ? <AdminHome /> : <UserHome userData={userData} />;
 }
-

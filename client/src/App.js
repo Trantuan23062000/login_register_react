@@ -3,11 +3,12 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 
-import Login from './components/login.component'
-import SignUp from './components/signup.component'
-import USers from './components/userdetails'
-import Userdetails from './components/userdetails'
-import Forgot from './components/resetpassword'
+import Login from "./components/login_component";
+import SignUp from "./components/signup_component";
+import UserDetails from "./components/userdetails";
+import userHome from "./components/userHome"
+import Forgot from "./components/resetpassword"
+
 
 
 function App() {
@@ -37,17 +38,15 @@ function App() {
           </div>
         </nav>
 
-        <div className="auth-wrapper">
-          <div className="auth-inner">
-            <Routes>
-              <Route exact path="/" element={isLoggedIn === "true" ? <Userdetails /> : <Login />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<SignUp />} />
-              <Route path="/userdetails" element={<USers />} />
-              <Route path="/forgot-password" element={<Forgot />} />
-            </Routes>
-          </div>
-        </div>
+        <Routes>
+          <Route exact path="/" element={isLoggedIn === "true" ? < UserDetails /> : <Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<SignUp />} />
+          <Route path="/UserDetails" element={<UserDetails />} />
+          <Route path="/userHome" element={<userHome />} />
+          <Route path="/forgot-password" element={<Forgot />} />
+        </Routes>
+
       </div>
     </Router>
   )

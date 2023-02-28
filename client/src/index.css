@@ -3,6 +3,7 @@
 * {
   box-sizing: border-box;
 }
+
 body {
   background: #1c8ef9 !important;
   min-height: 100vh;
@@ -81,4 +82,10 @@ html,
 
 .forgot-password a {
   color: #167bff;
+}
+
+table,
+th,
+td {
+  border: 1px solid black !important;
 }
